@@ -5,6 +5,7 @@ from .models import Book, Author, Review
 from .serializers import BookSerializer, AuthorSerializer, ReviewSerializer
 from rest_framework import generics
 from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 class BookCreateListAPIView(generics.ListCreateAPIView):
     queryset = Book.objects.all()
