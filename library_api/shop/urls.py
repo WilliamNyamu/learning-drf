@@ -6,6 +6,7 @@ router = DefaultRouter()
 router.register(r"gift", views.GiftAPIView)
 router.register(r"merchandise", views.MerchandiseAPIView)
 
+
 urlpatterns = [
     path("api/", include(router.urls)),
     path("", views.index, name="index")
