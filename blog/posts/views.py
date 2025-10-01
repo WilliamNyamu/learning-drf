@@ -11,6 +11,7 @@ class UserAPIView(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ['username', 'last_name']
+    ordering_fields = ['username', 'last_name']
 
 class PostAPIView(viewsets.ModelViewSet):
     queryset = Post.objects.all()
