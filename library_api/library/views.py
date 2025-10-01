@@ -6,10 +6,15 @@ from .serializers import BookSerializer, AuthorSerializer, ReviewSerializer
 from rest_framework import generics
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework import permissions
 
 class BookCreateListAPIView(generics.ListCreateAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def perform_create(self, serializer):
+        serializer.save(author = self.request.user)
 
 class RetrieveAndUpdateAndDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Book.objects.all()
@@ -19,6 +24,7 @@ class RetrieveAndUpdateAndDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
 class BookListAPIView(generics.ListAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
         # Starts with the base queryset from the class
@@ -34,6 +40,9 @@ class BookListAPIView(generics.ListAPIView):
                     # i = case-insensitive
                     # contains = substring match
         return queryset
+    
+    def perform_create(self, serializer):
+        serializer.save(author = self.request.user)
 
 class AuthorListAPIView(generics.ListAPIView):
     queryset = Author.objects.all()
@@ -48,8 +57,7 @@ class AuthorListAPIView(generics.ListAPIView):
 
 class ReviewAPIView(viewsets.ModelViewSet):
     queryset = Review.objects.all()
-    serializer_class = ReviewSerializer
-    
+    serializer_class = ReviewSerializer   
     
 
 

@@ -12,3 +12,7 @@ urlpatterns = [
     path("books/", views.BookCreateListAPIView.as_view()),
     path("books/<int:pk>/", views.RetrieveAndUpdateAndDestroyAPIView.as_view()),
 ]
+
+urlpatterns += [
+    path("api-auth/", include("rest_framework.urls"))
+]

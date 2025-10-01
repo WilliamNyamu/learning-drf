@@ -3,12 +3,40 @@ from django.http import HttpResponse
 from rest_framework import viewsets
 from .models import Gift, Merchandise
 from .serializers import GiftSerializer, MerchandiseSerializer
-# Create your views here.
+from rest_framework.authentication import TokenAuthentication, SessionAuthentication
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from django.contrib.auth import authenticate, login
+from rest_framework.authtoken.models import Token
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+
+class SessionAndTokenLoginView(APIView):
+    def post(self, request):
+        username = request.data.get("username")
+        password = request.data.get("password")
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            # create session (so browsable API works)
+            login(request, user)
+
+            # get or create token
+            token, _ = Token.objects.get_or_create(user=user)
+
+            return Response({
+                "message": "Login successful",
+                "user": user.username,
+                "token": token.key
+            })
+        return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
 
 def index(request):
     return HttpResponse("<h2>Shop Sanity Checks</h2>")
 
 class GiftAPIView(viewsets.ModelViewSet):
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+    permission_classes = [IsAuthenticatedOrReadOnly]
     queryset = Gift.objects.all()
     serializer_class = GiftSerializer
 
