@@ -12,6 +12,14 @@ class UserSerializer(serializers.ModelSerializer):
     
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}".title()
+    
+    def create(self, validated_data):
+        # use create_user so password is hashed
+        user = User.objects.create_user(
+            username=validated_data['username'],
+            password=validated_data['password']
+        )
+        return user
 
 
 class CommentSerializer(serializers.ModelSerializer):
